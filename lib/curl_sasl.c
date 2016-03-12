@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2012 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2012 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -940,14 +940,14 @@ CURLcode Curl_sasl_create_digest_http_message(struct SessionHandle *data,
   }
 
   /*
-    if the algorithm is "MD5" or unspecified (which then defaults to MD5):
+    If the algorithm is "MD5" or unspecified (which then defaults to MD5):
 
-    A1 = unq(username-value) ":" unq(realm-value) ":" passwd
+      A1 = unq(username-value) ":" unq(realm-value) ":" passwd
 
-    if the algorithm is "MD5-sess" then:
+    If the algorithm is "MD5-sess" then:
 
-    A1 = H( unq(username-value) ":" unq(realm-value) ":" passwd )
-         ":" unq(nonce-value) ":" unq(cnonce-value)
+      A1 = H( unq(username-value) ":" unq(realm-value) ":" passwd ) ":"
+            unq(nonce-value) ":" unq(cnonce-value)
   */
 
   md5this = (unsigned char *)
@@ -975,11 +975,11 @@ CURLcode Curl_sasl_create_digest_http_message(struct SessionHandle *data,
   /*
     If the "qop" directive's value is "auth" or is unspecified, then A2 is:
 
-      A2       = Method ":" digest-uri-value
+      A2 = Method ":" digest-uri-value
 
-          If the "qop" value is "auth-int", then A2 is:
+    If the "qop" value is "auth-int", then A2 is:
 
-      A2       = Method ":" digest-uri-value ":" H(entity-body)
+      A2 = Method ":" digest-uri-value ":" H(entity-body)
 
     (The "Method" value is the HTTP request method as specified in section
     5.1.1 of RFC 2616)
@@ -1039,7 +1039,7 @@ CURLcode Curl_sasl_create_digest_http_message(struct SessionHandle *data,
     are copied as is from the server, escapes and all.  cnonce is generated
     with web-safe characters.  uri is already percent encoded.  nc is 8 hex
     characters.  algorithm and qop with standard values only contain web-safe
-    chracters.
+    characters.
   */
   userp_quoted = sasl_digest_string_quoted(userp);
   if(!userp_quoted)
@@ -1143,11 +1143,11 @@ void Curl_sasl_digest_cleanup(struct digestdata *digest)
 /*
  * Curl_sasl_ntlm_cleanup()
  *
- * This is used to clean up the ntlm specific data.
+ * This is used to clean up the NTLM specific data.
  *
  * Parameters:
  *
- * ntlm    [in/out] - The ntlm data struct being cleaned up.
+ * ntlm    [in/out] - The NTLM data struct being cleaned up.
  *
  */
 void Curl_sasl_ntlm_cleanup(struct ntlmdata *ntlm)
@@ -1230,7 +1230,7 @@ void Curl_sasl_cleanup(struct connectdata *conn, unsigned int authused)
 #endif
 
 #if defined(USE_NTLM)
-  /* Cleanup the ntlm structure */
+  /* Cleanup the NTLM structure */
   if(authused == SASL_MECH_NTLM) {
     Curl_sasl_ntlm_cleanup(&conn->ntlm);
   }
