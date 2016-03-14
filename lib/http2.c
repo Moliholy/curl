@@ -902,16 +902,17 @@ static ssize_t data_source_read_callback(nghttp2_session *session,
   return nread;
 }
 
+#define H2_INITIAL_WINDOW_SIZE (1048576 * 16)
+
 /*
  * The HTTP2 settings we send in the Upgrade request
  */
 static nghttp2_settings_entry settings[] = {
   { NGHTTP2_SETTINGS_MAX_CONCURRENT_STREAMS, 100 },
-  { NGHTTP2_SETTINGS_INITIAL_WINDOW_SIZE, NGHTTP2_INITIAL_WINDOW_SIZE },
+  { NGHTTP2_SETTINGS_INITIAL_WINDOW_SIZE, H2_INITIAL_WINDOW_SIZE },
 };
 
-#define H2_BUFSIZE (1048576 * 16)
-#define H2_INITIAL_WINDOW_SIZE (1048576 * 16)
+#define H2_BUFSIZE 32768
 
 /*
  * Initialize nghttp2 for a Curl connection
@@ -1625,18 +1626,6 @@ CURLcode Curl_http2_switched(struct connectdata *conn,
     nghttp2_session_set_stream_user_data(httpc->h2,
                                          stream->stream_id,
                                          conn->data);
-    /* Submit the settings */
-    nghttp2_settings_entry iv[16];
-    iv[0].settings_id = NGHTTP2_SETTINGS_MAX_CONCURRENT_STREAMS;
-    iv[0].value = 64;
-    iv[1].settings_id = NGHTTP2_SETTINGS_INITIAL_WINDOW_SIZE;
-    iv[1].value = H2_INITIAL_WINDOW_SIZE;
-    rv = nghttp2_submit_settings(conn->proto.httpc.h2,
-                                 NGHTTP2_FLAG_NONE, iv, 2);
-    if (rv != 0) {
-      failf(conn->data, "Couldn't submit the settings");
-      return CURLE_HTTP2;
-    }
     /* Set an appropriate window size */
     int32_t wininc = H2_INITIAL_WINDOW_SIZE - 1
                      - NGHTTP2_INITIAL_CONNECTION_WINDOW_SIZE;
